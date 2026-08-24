@@ -89,6 +89,21 @@ https://odorokiya-generator.llm48.chatgpt.site/
 
 4作品すべて本館から稼働中です。正確さ、根拠、必要性は提供していません。
 
+### 006：Nature Reviewers Simulator
+
+論文タイトルを一行入力すると、Nature級トップジャーナルを想定した架空の査読結果を生成します。
+
+- 本文を読んだふりは禁止
+- Reviewer 1は方法論を破壊
+- Reviewer 2は研究予算を破壊
+- Reviewer 3は好意的に国際多施設・長期追跡を要求
+- 最後に「著者らの健闘を祈る。」
+
+**プロンプト全文：**  
+[006-nature-reviewers-simulator.md](006-nature-reviewers-simulator.md)
+
+Methodological confidenceは構造的に上がりません。これは不具合ではありません。査読です。
+
 ---
 
 ## 研究上の重大事故
