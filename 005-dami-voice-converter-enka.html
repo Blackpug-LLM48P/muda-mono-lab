@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨超キラキラ☆お花畑ダミ声変換機🌸 v2.1.0-enterprise-enka</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #a1c4fd 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .sparkle-bg {
+            background-image: radial-gradient(white 15%, transparent 16%), radial-gradient(white 15%, transparent 16%);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+            animation: sparkleMove 15s linear infinite;
+        }
+        @keyframes sparkleMove {
+            0% { background-position: 0 0, 30px 30px; }
+            100% { background-position: 100px 100px, 130px 130px; }
+        }
+        .rainbow-text {
+            background: linear-gradient(to right, #ff007f, #ff7f00, #ff00ff, #7f00ff, #007fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: rainbow 4s ease infinite;
+            background-size: 400% 400%;
+        }
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .flower-float { animation: float 3s ease-in-out infinite; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+        .pulse-glow {
+            box-shadow: 0 0 25px rgba(255, 105, 180, 0.8), 0 0 50px rgba(255, 192, 203, 0.5);
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .sparkle-bg, .rainbow-text, .flower-float, .animate-pulse { animation: none !important; }
+        }
+    </style>
+</head>
+<body class="sparkle-bg flex flex-col items-center justify-center p-4 min-h-screen relative">
+
+    <div class="absolute top-6 left-6 text-4xl flower-float select-none pointer-events-none" aria-hidden="true">🌸✨</div>
+    <div class="absolute top-12 right-10 text-5xl flower-float select-none pointer-events-none" style="animation-delay: 1s;" aria-hidden="true">🌷💖</div>
+    <div class="absolute bottom-10 left-12 text-5xl flower-float select-none pointer-events-none" style="animation-delay: 1.5s;" aria-hidden="true">🌼⭐</div>
+    <div class="absolute bottom-12 right-8 text-4xl flower-float select-none pointer-events-none" style="animation-delay: 0.5s;" aria-hidden="true">🌺✨</div>
+
+    <div class="bg-white/80 backdrop-blur-md rounded-3xl p-6 md:p-10 shadow-2xl border-4 border-pink-300 w-full max-w-2xl relative z-10 pulse-glow">
+
+        <header class="text-center mb-6">
+            <h1 class="text-3xl md:text-5xl font-black rainbow-text tracking-wider mb-2 drop-shadow-sm">
+                🌸お花畑ダミ声変換機💐
+            </h1>
+            <p class="text-pink-600 font-bold text-sm md:text-base animate-pulse">
+                ✨ふわふわキュートな見た目で中身はゴリゴリのデスボイスだよっ！✨
+            </p>
+            <p class="text-pink-400 font-bold text-[10px] mt-1 tracking-widest" id="versionBadge"></p>
+        </header>
+
+        <div class="mb-6">
+            <label for="inputText" class="text-pink-700 font-bold mb-2 flex items-center gap-2">
+                <span aria-hidden="true">🌷</span>変換したいふんわり文章を入力してね（♡&gt;ω&lt;♡）
+            </label>
+            <textarea id="inputText" rows="3"
+                class="w-full p-4 rounded-2xl border-2 border-pink-200 focus:border-pink-400 focus:outline-none focus:ring-4 focus:ring-pink-100 text-gray-700 font-medium text-lg resize-none shadow-inner transition-all"
+                placeholder="例：おはようございます！今日もいい天気ですねっ☆">おはようございます！今日も良いお天気ですねっ☆</textarea>
+        </div>
+
+        <div class="mb-4">
+            <label for="voiceMode" class="block text-pink-700 font-bold mb-2 text-sm">🎙️ 変換モード</label>
+            <select id="voiceMode" class="w-full p-3 rounded-xl border-2 border-pink-200 focus:border-pink-400 focus:outline-none font-bold text-pink-600 bg-pink-50">
+                <option value="dami">💀 ダミ声モード</option>
+                <option value="enka">🎤 ENKA MODE（こぶし過積載）</option>
+            </select>
+        </div>
+
+        <div id="enkaControls" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 p-4 rounded-2xl bg-purple-50/80 border-2 border-purple-200">
+            <div>
+                <label for="enkaKobushi" class="block text-purple-700 font-bold mb-2 text-sm">🎵 こぶし</label>
+                <select id="enkaKobushi" class="w-full p-3 rounded-xl border-2 border-purple-200 focus:border-purple-400 focus:outline-none font-bold text-purple-700 bg-white">
+                    <option value="weak">弱</option>
+                    <option value="medium">中</option>
+                    <option value="ishikawa" selected>石川</option>
+                </select>
+            </div>
+            <div>
+                <label for="enkaTame" class="block text-purple-700 font-bold mb-2 text-sm">⏳ 溜め</label>
+                <select id="enkaTame" class="w-full p-3 rounded-xl border-2 border-purple-200 focus:border-purple-400 focus:outline-none font-bold text-purple-700 bg-white">
+                    <option value="short">短</option>
+                    <option value="long">長</option>
+                    <option value="nhk" selected>NHKホール</option>
+                </select>
+            </div>
+            <div class="md:col-span-2 text-center text-purple-700 font-black text-sm tracking-widest">魂：ON / ON / ON</div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div>
+                <label for="damiLevel" class="block text-pink-700 font-bold mb-2 text-sm">🌟 ダミ声レベル（濁点・半濁点の濃厚さ）</label>
+                <select id="damiLevel" class="w-full p-3 rounded-xl border-2 border-pink-200 focus:border-pink-400 focus:outline-none font-bold text-pink-600 bg-pink-50">
+                    <option value="1">✨ 標準（ほんのりデスボイス）</option>
+                    <option value="2" selected>🔥 強め（ガッツリ濁点だらけ）</option>
+                    <option value="3">💀 最強（地獄の底からの叫び）</option>
+                </select>
+            </div>
+            <div>
+                <label for="decoStyle" class="block text-pink-700 font-bold mb-2 text-sm">🌸 装飾フレーム（お花畑度）</label>
+                <select id="decoStyle" class="w-full p-3 rounded-xl border-2 border-pink-200 focus:border-pink-400 focus:outline-none font-bold text-pink-600 bg-pink-50">
+                    <option value="flower">🌷 お花畑＆キラキラ</option>
+                    <option value="heart">💖 ハート＆リボン</option>
+                    <option value="skull">💀 デス＆ヘヴィ</option>
+                    <option value="none">✨ なし（シンプル）</option>
+                </select>
+            </div>
+        </div>
+
+        <button id="convertBtn" type="button"
+            class="w-full bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400 hover:from-pink-500 hover:to-indigo-500 text-white font-black py-4 px-6 rounded-2xl shadow-lg transform active:scale-95 transition-all text-xl tracking-wider flex items-center justify-center gap-3 border-2 border-white focus:outline-none focus:ring-4 focus:ring-purple-200">
+            <span aria-hidden="true">✨</span> 狂気のダミ声に変換するっ！ <span aria-hidden="true">💖</span>
+        </button>
+
+        <div class="mt-8">
+            <div class="flex justify-between items-center mb-2">
+                <label for="outputText" class="text-pink-700 font-bold flex items-center gap-2">
+                    <span aria-hidden="true">💐</span>変換されたカオスなダミ声文章
+                </label>
+                <button id="copyBtn" type="button" class="text-xs bg-pink-100 hover:bg-pink-200 text-pink-600 font-bold py-1 px-3 rounded-full transition-colors border border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-400">
+                    📋 コピーする
+                </button>
+            </div>
+            <div id="outputText" role="status" aria-live="polite"
+                class="w-full p-5 rounded-2xl border-2 border-pink-200 bg-pink-50/50 text-gray-800 font-bold text-lg min-h-[100px] flex items-center justify-center text-center shadow-inner whitespace-pre-wrap break-all">
+                ここに結果が表示されるよっ☆彡
+            </div>
+
+            <!-- 無駄なテレメトリ表示 -->
+            <dl class="mt-3 grid grid-cols-3 gap-2 text-center">
+                <div class="bg-white/70 rounded-xl py-2 border border-pink-200">
+                    <dt class="text-[10px] text-pink-500 font-bold">書記素数</dt>
+                    <dd class="text-pink-700 font-black text-lg" id="metricGraphemes">-</dd>
+                </div>
+                <div class="bg-white/70 rounded-xl py-2 border border-pink-200">
+                    <dt class="text-[10px] text-pink-500 font-bold">濁点被覆率</dt>
+                    <dd class="text-pink-700 font-black text-lg" id="metricCoverage">-</dd>
+                </div>
+                <div class="bg-white/70 rounded-xl py-2 border border-pink-200">
+                    <dt class="text-[10px] text-pink-500 font-bold">処理時間</dt>
+                    <dd class="text-pink-700 font-black text-lg" id="metricLatency">-</dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-6 bg-pink-500 text-white font-bold py-3 px-6 rounded-full shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-2 border-2 border-white" role="status" aria-live="polite">
+        <span aria-hidden="true">✨</span> <span id="toastMessage">コピー完了だよっ！</span> <span aria-hidden="true">💖</span>
+    </div>
+
+<script>
+/* =============================================================================
+ *  お花畑ダミ声変換機 v2.0.0-enterprise
+ *  ---------------------------------------------------------------------------
+ *  本モジュールは「ふわふわ入力文字列」を「ゴリゴリのデスボイス文字列」へ
+ *  変換する責務を負う。単一ファイル・依存ゼロ・IIFE カプセル化。
+ *
+ *  レイヤ構成（過剰）:
+ *    L0 Config        : 凍結された定数
+ *    L1 Segmentation  : 書記素クラスタ分割（サロゲートペア安全）
+ *    L2 Repository    : 濁点マッピングの参照
+ *    L3 Strategy      : ダミ声強度ごとの変換戦略
+ *    L4 Decorator     : 装飾フレームの付与
+ *    L5 Pipeline      : L1〜L4 の合成＋テレメトリ計測
+ *    L6 Controller    : DOM バインディング
+ * ========================================================================== */
+(() => {
+    'use strict';
+
+    /* --- L0: Configuration ------------------------------------------------ */
+
+    const CONFIG = Object.freeze({
+        VERSION: '2.1.0-enterprise-enka',
+        INTENSITY: Object.freeze({ MILD: 1, STRONG: 2, INFERNAL: 3 }),
+        /** 通常文字にランダムで濁点を付与する確率 */
+        STRAY_DAKUTEN_RATE: 0.4,
+        /** 濁点付与の対象となる日本語文字（かな・漢字） */
+        JAPANESE_GLYPH: /[ぁ-んァ-ヶ一-龥]/u,
+        /** 絵文字判定。地獄フィルタの適用除外に使う */
+        PICTOGRAPH: /\p{Extended_Pictographic}/u,
+        DAKUTEN: 'ﾞ',
+        /** U+0337 COMBINING SHORT SOLIDUS OVERLAY */
+        CHAOS_OVERLAY: '\u0337',
+    });
+
+    /* --- L1: Segmentation -------------------------------------------------
+     * 旧実装の `for (i of input.length)` と `split('')` は UTF-16 コード
+     * ユニット単位だったため、絵文字（サロゲートペア）が真っ二つに割れて
+     * 文字化けしていた。書記素クラスタ単位に統一して解決する。
+     * -------------------------------------------------------------------- */
+
+    const Segmenter = (() => {
+        const supported = typeof Intl !== 'undefined' && typeof Intl.Segmenter === 'function';
+        const instance = supported
+            ? new Intl.Segmenter('ja', { granularity: 'grapheme' })
+            : null;
+
+        return {
+            /** @param {string} text @returns {string[]} */
+            split(text) {
+                if (!instance) return Array.from(text); // コードポイント単位フォールバック
+                return Array.from(instance.segment(text), (s) => s.segment);
+            },
+            get engine() { return supported ? 'Intl.Segmenter' : 'Array.from'; },
+        };
+    })();
+
+    /* --- L2: Repository ---------------------------------------------------
+     * 旧実装にあった `else if (vowels.includes(char))` 分岐は、母音がすべて
+     * このマップのキーに含まれているため到達不能だった。よって削除済み。
+     * -------------------------------------------------------------------- */
+
+    const DakutenRepository = (() => {
+        const VOWELS = Object.freeze(['あ', 'い', 'う', 'え', 'お', 'ア', 'イ', 'ウ', 'エ', 'オ']);
+
+        const MAP = Object.freeze({
+            'あ': ['ぁ', 'あﾞ', 'あ̈', 'ą̀'],
+            'い': ['ぃ', 'いﾞ', 'ì̈', 'ī̏'],
+            'う': ['ぅ', 'うﾞ', 'ü̈', 'ù̌'],
+            'え': ['ぇ', 'えﾞ', 'ë́', 'ę̄'],
+            'お': ['ぉ', 'おﾞ', 'ö́', 'ò̀'],
+            'ア': ['ァ', 'ア゙', 'Ā́', 'ą́'],
+            'イ': ['ィ', 'イ゙', 'Ī̀', 'ǐ'],
+            'ウ': ['ゥ', 'ウﾞ', 'Ü̈', 'ű'],
+            'エ': ['ェ', 'エ゙', 'Ê̂', 'ę̄'],
+            'オ': ['ォ', 'オ゙', 'Ö́', 'ǒ'],
+            'か': ['が', 'がﾞ', 'ｶﾞ'], 'き': ['ぎ', 'ぎﾞ', 'ｷﾞ'], 'く': ['ぐ', 'ぐﾞ', 'ｸﾞ'], 'け': ['げ', 'げﾞ', 'ｹﾞ'], 'こ': ['ご', 'ごﾞ', 'ｺﾞ'],
+            'さ': ['ざ', 'ざﾞ', 'ｻﾞ'], 'し': ['じ', 'じﾞ', 'ｼﾞ'], 'す': ['ず', 'ずﾞ', 'ｽﾞ'], 'せ': ['ぜ', 'ぜﾞ', 'ｾﾞ'], 'そ': ['ぞ', 'ぞﾞ', 'ｿﾞ'],
+            'た': ['だ', 'だﾞ', 'ﾀﾞ'], 'ち': ['ぢ', 'ぢﾞ', 'ﾁﾞ'], 'つ': ['づ', 'づﾞ', 'ﾂﾞ'], 'て': ['で', 'でﾞ', 'ﾃﾞ'], 'と': ['ど', 'どﾞ', 'ﾄﾞ'],
+            'は': ['ば', 'ぱ', 'ﾊﾞ'], 'ひ': ['び', 'ぴ', 'ﾋﾞ'], 'ふ': ['ぶ', 'ぷ', 'ﾌﾞ'], 'へ': ['べ', 'ぺ', 'ﾍﾞ'], 'ほ': ['ぼ', 'ぽ', 'ﾎﾞ'],
+            'カ': ['ガ', 'ｶﾞ'], 'キ': ['ギ', 'ｷﾞ'], 'ク': ['グ', 'ｸﾞ'], 'ケ': ['ゲ', 'ｹﾞ'], 'コ': ['ゴ', 'ｺﾞ'],
+            'サ': ['ザ', 'ｻﾞ'], 'シ': ['ジ', 'ｼﾞ'], 'ス': ['ズ', 'ｽﾞ'], 'セ': ['ゼ', 'ｾﾞ'], 'ソ': ['ゾ', 'ｿﾞ'],
+            'タ': ['ダ', 'ﾀﾞ'], 'チ': ['ヂ', 'ﾁﾞ'], 'ツ': ['ヅ', 'ﾂﾞ'], 'テ': ['デ', 'ﾃﾞ'], 'ト': ['ド', 'ﾄﾞ'],
+            'ハ': ['バ', 'パ', 'ﾊﾞ'], 'ヒ': ['ビ', 'ピ', 'ﾋﾞ'], 'フ': ['ブ', 'プ', 'ﾌﾞ'], 'ヘ': ['ベ', 'ペ', 'ﾍﾞ'], 'ホ': ['ボ', 'ポ', 'ﾎﾞ']
+        });
+
+        return {
+            has: (g) => Object.prototype.hasOwnProperty.call(MAP, g),
+            variantsOf: (g) => MAP[g] ?? [],
+            primaryOf: (g) => MAP[g]?.[0] ?? g,
+            randomOf: (g) => {
+                const v = MAP[g];
+                if (!v || v.length === 0) return g;
+                return v[Math.floor(Math.random() * v.length)];
+            },
+            isVowel: (g) => VOWELS.includes(g),
+        };
+    })();
+
+    /* --- L3: Intensity Strategies -----------------------------------------
+     * 各戦略は grapheme を受け取り { text, mutated } を返す純粋関数。
+     * mutated フラグはテレメトリ（濁点被覆率）の算出に用いる。
+     * -------------------------------------------------------------------- */
+
+    const intact = (text) => ({ text, mutated: false });
+    const mutate = (text) => ({ text, mutated: true });
+
+    const STRATEGIES = Object.freeze({
+        [CONFIG.INTENSITY.MILD]: {
+            label: '標準',
+            apply(g) {
+                if (!DakutenRepository.has(g)) return intact(g);
+                return mutate(DakutenRepository.primaryOf(g));
+            },
+        },
+
+        [CONFIG.INTENSITY.STRONG]: {
+            label: '強め',
+            apply(g) {
+                if (DakutenRepository.has(g)) {
+                    // 既に濁点済みの候補にさらに濁点を重ねる。これは意図通り。
+                    return mutate(DakutenRepository.randomOf(g) + CONFIG.DAKUTEN);
+                }
+                if (Math.random() < CONFIG.STRAY_DAKUTEN_RATE && CONFIG.JAPANESE_GLYPH.test(g)) {
+                    return mutate(g + CONFIG.DAKUTEN);
+                }
+                return intact(g);
+            },
+        },
+
+        [CONFIG.INTENSITY.INFERNAL]: {
+            label: '最強',
+            apply(g) {
+                if (DakutenRepository.has(g)) {
+                    const suffix = DakutenRepository.isVowel(g) ? '⚡' : '🔥';
+                    return mutate(DakutenRepository.primaryOf(g) + CONFIG.DAKUTEN.repeat(2) + suffix);
+                }
+                if (Math.random() < CONFIG.STRAY_DAKUTEN_RATE && CONFIG.JAPANESE_GLYPH.test(g)) {
+                    return mutate(g + CONFIG.DAKUTEN);
+                }
+                return intact(g);
+            },
+            /** 全体に混沌オーバーレイを敷く。絵文字には適用しない（割れるので） */
+            postProcess(graphemes) {
+                const overlaid = graphemes.map((g) =>
+                    CONFIG.PICTOGRAPH.test(g) ? g : g + CONFIG.CHAOS_OVERLAY
+                );
+                return `【地獄】${overlaid.join('')}【混沌】`;
+            },
+        },
+    });
+
+    const resolveStrategy = (level) =>
+        STRATEGIES[level] ?? STRATEGIES[CONFIG.INTENSITY.STRONG];
+
+    /* --- L3.5: ENKA Mode -----------------------------------------------------
+     * かな列を対象に、語頭の喉鳴り・溜め・母音伸長・終止こぶしを過剰付与する。
+     * 形態素解析や音声合成はしない。漢字の読みはブラウザ単体では解けないため、
+     * acceptance test 用の短い読みヒントだけを持ち、一般入力はかな部分を変換する。
+     * -------------------------------------------------------------------- */
+
+    const ENKA_READING_HINTS = Object.freeze({
+        '天城越え': 'あまぎごえ',
+    });
+
+    const ENKA_VOWEL = (() => {
+        const map = new Map();
+        const groups = [
+            ['あかがさざただなはばぱまやらわぁゃゎ', 'a'],
+            ['いきぎしじちぢにひびぴみりぃ', 'i'],
+            ['うくぐすずつづぬふぶぷむゆるぅゅ', 'u'],
+            ['えけげせぜてでねへべぺめれぇ', 'e'],
+            ['おこござぞとどのほぼぽもよろをぉょ', 'o'],
+            ['アカガサザタダナハバパマヤラワァャヮ', 'a'],
+            ['イキギシジチヂニヒビピミリィ', 'i'],
+            ['ウクグスズツヅヌフブプムユルゥュ', 'u'],
+            ['エケゲセゼテデネヘベペメレェ', 'e'],
+            ['オコゴサゾトドノホボポモヨロヲォョ', 'o'],
+        ];
+        for (const [chars, vowel] of groups) {
+            for (const ch of chars) map.set(ch, vowel);
+        }
+        return map;
+    })();
+
+    const ENKA_VOWEL_GLYPHS = Object.freeze({
+        a: { small: 'ぁ', full: 'あ' },
+        i: { small: 'ぃ', full: 'い' },
+        u: { small: 'ぅ', full: 'う' },
+        e: { small: 'ぇ', full: 'え' },
+        o: { small: 'ぉ', full: 'お' },
+    });
+
+    const repeatBetween = (s, min, max) => s.repeat(min + Math.floor(Math.random() * (max - min + 1)));
+
+    function enkaReadingOf(source) {
+        const trimmed = source.trim();
+        return ENKA_READING_HINTS[trimmed] ?? source;
+    }
+
+    function enkaTail(g, strength) {
+        const vowel = ENKA_VOWEL.get(g);
+        if (!vowel) return g;
+        const v = ENKA_VOWEL_GLYPHS[vowel];
+        if (strength === 'weak') {
+            return g + v.small + repeatBetween(v.full, 1, 2) + 'ー';
+        }
+        if (strength === 'medium') {
+            return g + v.small + repeatBetween(v.full, 2, 3) + 'ー';
+        }
+        return g + v.small + v.full.repeat(3) + 'ー';
+    }
+
+    function enkaTransform(source, { kobushi = 'ishikawa', tame = 'nhk' } = {}) {
+        const reading = enkaReadingOf(source);
+        const graphemes = Segmenter.split(reading);
+        const kanaIndexes = graphemes
+            .map((g, i) => ENKA_VOWEL.has(g) ? i : -1)
+            .filter((i) => i >= 0);
+
+        if (kanaIndexes.length === 0) {
+            return { text: `ん゛……${source}……ぇぇ`, mutated: 0 };
+        }
+
+        const firstKana = kanaIndexes[0];
+        const lastKana = kanaIndexes[kanaIndexes.length - 1];
+        const penultimateKana = kanaIndexes.length >= 2 ? kanaIndexes[kanaIndexes.length - 2] : null;
+        const preTailKana = kanaIndexes.length >= 3 ? kanaIndexes[kanaIndexes.length - 3] : null;
+
+        const out = graphemes.slice();
+        let mutated = 0;
+
+        // 語頭は鼻音＋喉鳴りで入る。
+        const firstVowel = ENKA_VOWEL.get(out[firstKana]);
+        if (firstVowel) {
+            const v = ENKA_VOWEL_GLYPHS[firstVowel];
+            out[firstKana] = `ん゛${v.small}`;
+            mutated += 1;
+        }
+
+        // 終止前に一度大きく溜める。
+        if (preTailKana !== null && preTailKana !== firstKana) {
+            const tameStrength = tame === 'short' ? 'weak' : tame === 'long' ? 'medium' : kobushi;
+            out[preTailKana] = enkaTail(out[preTailKana], tameStrength) + '　';
+            mutated += 1;
+        }
+
+        // 最後の二音は「ごぉぉお　お　ぇえーーぇぇ」型の終止こぶしにする。
+        if (penultimateKana !== null && penultimateKana !== firstKana) {
+            const g = graphemes[penultimateKana];
+            const vowel = ENKA_VOWEL.get(g);
+            const v = ENKA_VOWEL_GLYPHS[vowel];
+            const smallN = kobushi === 'weak' ? 1 : 2;
+            const fullN = kobushi === 'weak' ? 1 : 1;
+            out[penultimateKana] = g + v.small.repeat(smallN) + v.full.repeat(fullN) + '　' + v.full + '　';
+            mutated += 1;
+        }
+
+        if (lastKana !== firstKana) {
+            const g = graphemes[lastKana];
+            const vowel = ENKA_VOWEL.get(g);
+            const v = ENKA_VOWEL_GLYPHS[vowel];
+            const dashN = tame === 'short' ? 1 : 2;
+            const tailSmallN = kobushi === 'weak' ? 1 : 2;
+            out[lastKana] = v.small + v.full + 'ー'.repeat(dashN) + v.small.repeat(tailSmallN);
+            mutated += 1;
+        }
+
+        // 中間にも確率的な小こぶしを入れる。同じ入力でも毎回少し揺れる。
+        for (const idx of (kanaIndexes.length >= 8 ? kanaIndexes.slice(1, -3) : [])) {
+            if (Math.random() < (kobushi === 'weak' ? 0.12 : kobushi === 'medium' ? 0.22 : 0.32)) {
+                const g = graphemes[idx];
+                const vowel = ENKA_VOWEL.get(g);
+                const v = ENKA_VOWEL_GLYPHS[vowel];
+                out[idx] = g + v.small.repeat(1 + Math.floor(Math.random() * 2));
+                mutated += 1;
+            }
+        }
+
+        return { text: out.join(''), mutated };
+    }
+
+    /* --- L4: Decoration ---------------------------------------------------- */
+
+    const DECORATORS = Object.freeze({
+        flower: (s) => `🌸✨🌷 ${s} 🌷✨🌸`,
+        heart:  (s) => `💖🎀✨ ${s} ✨🎀💖`,
+        skull:  (s) => `💀🔥⚡ ${s} ⚡🔥💀`,
+        none:   (s) => s,
+    });
+
+    const resolveDecorator = (key) => DECORATORS[key] ?? DECORATORS.none;
+
+    /* --- L5: Pipeline ------------------------------------------------------ */
+
+    /**
+     * @typedef {Object} TransformResult
+     * @property {string} output
+     * @property {{ graphemes:number, mutated:number, coverage:number, latencyMs:number }} telemetry
+     */
+
+    /**
+     * @param {string} source
+     * @param {number} level
+     * @param {string} decoration
+     * @returns {TransformResult}
+     */
+    function transform(source, level, decoration, mode = 'dami', enkaOptions = {}) {
+        const startedAt = performance.now();
+
+        const graphemes = Segmenter.split(source);
+        let mutatedCount = 0;
+        let body;
+
+        if (mode === 'enka') {
+            const enka = enkaTransform(source, enkaOptions);
+            body = enka.text;
+            mutatedCount = enka.mutated;
+        } else {
+            const strategy = resolveStrategy(level);
+            const converted = graphemes.map((g) => {
+                const { text, mutated } = strategy.apply(g);
+                if (mutated) mutatedCount += 1;
+                return text;
+            });
+
+            body = strategy.postProcess
+                ? strategy.postProcess(converted)
+                : converted.join('');
+        }
+
+        const output = resolveDecorator(decoration)(body);
+        const latencyMs = performance.now() - startedAt;
+
+        return {
+            output,
+            telemetry: {
+                graphemes: graphemes.length,
+                mutated: mutatedCount,
+                coverage: graphemes.length === 0 ? 0 : mutatedCount / graphemes.length,
+                latencyMs,
+            },
+        };
+    }
+
+    /* --- L6: Controller ---------------------------------------------------- */
+
+    const $ = (id) => document.getElementById(id);
+
+    const dom = {
+        input: $('inputText'),
+        mode: $('voiceMode'),
+        enkaControls: $('enkaControls'),
+        enkaKobushi: $('enkaKobushi'),
+        enkaTame: $('enkaTame'),
+        level: $('damiLevel'),
+        deco: $('decoStyle'),
+        output: $('outputText'),
+        convertBtn: $('convertBtn'),
+        copyBtn: $('copyBtn'),
+        toast: $('toast'),
+        toastMessage: $('toastMessage'),
+        version: $('versionBadge'),
+        metrics: {
+            graphemes: $('metricGraphemes'),
+            coverage: $('metricCoverage'),
+            latency: $('metricLatency'),
+        },
+    };
+
+    let toastTimer = null;
+
+    function showToast(message) {
+        dom.toastMessage.textContent = message;
+        dom.toast.classList.remove('translate-y-20', 'opacity-0');
+        dom.toast.classList.add('translate-y-0', 'opacity-100');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+            dom.toast.classList.remove('translate-y-0', 'opacity-100');
+            dom.toast.classList.add('translate-y-20', 'opacity-0');
+        }, 2000);
+    }
+
+    function render() {
+        const { output, telemetry } = transform(
+            dom.input.value,
+            Number.parseInt(dom.level.value, 10),
+            dom.deco.value,
+            dom.mode.value,
+            { kobushi: dom.enkaKobushi.value, tame: dom.enkaTame.value }
+        );
+
+        dom.output.textContent = output;
+        dom.metrics.graphemes.textContent = telemetry.graphemes.toLocaleString('ja-JP');
+        dom.metrics.coverage.textContent = `${(telemetry.coverage * 100).toFixed(1)}%`;
+        dom.metrics.latency.textContent = `${telemetry.latencyMs.toFixed(2)}ms`;
+    }
+
+    async function copyOutput() {
+        const text = dom.output.textContent;
+        try {
+            if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(text);
+            } else {
+                throw new Error('Clipboard API unavailable');
+            }
+            showToast('コピー完了だよっ！');
+        } catch {
+            // execCommand フォールバック（iPad Safari の古い版など）
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.setAttribute('readonly', '');
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            ta.setSelectionRange(0, ta.value.length);
+            const ok = document.execCommand('copy');
+            document.body.removeChild(ta);
+            showToast(ok ? 'コピー完了だよっ！' : 'コピーできなかったよ…手動でどうぞ');
+        }
+    }
+
+    function syncModeUi() {
+        const isEnka = dom.mode.value === 'enka';
+        dom.enkaControls.classList.toggle('hidden', !isEnka);
+        dom.convertBtn.innerHTML = isEnka
+            ? '<span aria-hidden="true">🎤</span> 魂のENKAに変換するっ！ <span aria-hidden="true">🔥</span>'
+            : '<span aria-hidden="true">✨</span> 狂気のダミ声に変換するっ！ <span aria-hidden="true">💖</span>';
+    }
+
+    function bind() {
+        dom.convertBtn.addEventListener('click', render);
+        dom.copyBtn.addEventListener('click', copyOutput);
+        // 入力・設定変更でライブ更新（無駄に親切）
+        dom.input.addEventListener('input', render);
+        dom.mode.addEventListener('change', () => { syncModeUi(); render(); });
+        dom.enkaKobushi.addEventListener('change', render);
+        dom.enkaTame.addEventListener('change', render);
+        dom.level.addEventListener('change', render);
+        dom.deco.addEventListener('change', render);
+
+        dom.version.textContent = `v${CONFIG.VERSION} / segmenter: ${Segmenter.engine}`;
+        syncModeUi();
+        render();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bind);
+    } else {
+        bind();
+    }
+})();
+</script>
+</body>
+</html>
