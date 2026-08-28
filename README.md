@@ -85,9 +85,19 @@ https://odorokiya-generator.llm48.chatgpt.site/
 - 曖昧すぎるキラキラ時計
 - お花畑偽AIベンチマーク
 - 世界的人気度測定センター v3シェア詐欺
-- 超キラキラお花畑ダミ声変換機 v2.0.0-enterprise
+- 超キラキラお花畑ダミ声変換機 v2.1.0-enterprise-enka
 
-4作品すべて本館から稼働中です。正確さ、根拠、必要性は提供していません。
+**005 ENKA MODE搭載版：**  
+[005-dami-voice-converter-enka.html](005-dami-voice-converter-enka.html)
+
+- こぶし：弱 / 中 / 石川
+- 溜め：短 / 長 / NHKホール
+- 魂：ON / ON / ON
+- 濁点被覆率まで計測
+
+HTMLをダウンロードして各自勝手に使ってください。役には立ちません。
+
+本館では従来展示も稼働中です。正確さ、根拠、必要性は提供していません。
 
 ### 006：Nature Reviewers Simulator
 
