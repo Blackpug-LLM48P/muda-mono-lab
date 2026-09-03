@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>最新版ファイル判定システム 2 Professional</title>
+  <style>
+    :root{--face:#d4d0c8;--light:#fff;--mid:#808080;--dark:#404040;--navy:#000080;--blue:#0a246a}
+    *{box-sizing:border-box} body{margin:0;background:#3a6ea5;font:12px Tahoma,"MS UI Gothic",sans-serif;color:#000;overflow:auto}
+    button,select,input{font:12px Tahoma,"MS UI Gothic",sans-serif} button,select,input[type=text]{border:2px solid;border-color:var(--light) var(--dark) var(--dark) var(--light);background:var(--face);min-height:25px}
+    button{padding:2px 14px} button:active{border-color:var(--dark) var(--light) var(--light) var(--dark);padding:3px 13px 1px 15px} button:focus,select:focus,input:focus{outline:1px dotted #000;outline-offset:-4px}
+    .desktop{min-height:100vh;padding:28px 16px 46px;background-color:#3a6ea5;background-image:linear-gradient(45deg,rgba(255,255,255,.025) 25%,transparent 25%,transparent 75%,rgba(255,255,255,.025) 75%)}
+    .window{width:min(780px,calc(100vw - 24px));margin:auto;background:var(--face);border:2px solid;border-color:var(--light) #111 #111 var(--light);box-shadow:2px 2px 0 #000}
+    .titlebar{height:27px;background:linear-gradient(90deg,var(--navy),#1084d0);color:#fff;font-weight:bold;display:flex;align-items:center;padding:3px 4px 3px 6px;user-select:none}
+    .titlebar .icon{width:16px;height:16px;margin-right:5px;background:#fff;border:1px solid #000;display:grid;place-items:center;color:#000;font-size:10px}
+    .titlebar .caption{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sysbuttons{display:flex;gap:2px}.sysbuttons button{width:21px;min-height:19px;height:19px;padding:0;font-weight:bold;line-height:14px}
+    .menubar{padding:2px 5px;border-bottom:1px solid var(--mid);display:flex;position:relative}.menu{position:relative}.menubtn{border:0;background:transparent;min-height:25px;padding:2px 10px}.menubtn:hover,.menubtn.active{background:var(--navy);color:#fff}.menubtn:active{padding:2px 10px}.menubtn u{text-underline-offset:2px}.dropdown{display:none;position:absolute;left:0;top:25px;z-index:8;min-width:210px;background:var(--face);border:2px solid;border-color:#fff #111 #111 #fff;box-shadow:2px 2px #000;padding:2px}.menu.open .dropdown{display:block}.dropdown button{display:block;width:100%;border:0;text-align:left;padding:5px 24px 5px 25px;min-height:24px;position:relative}.dropdown button:hover{background:var(--navy);color:#fff}.dropdown button:active{padding:5px 24px 5px 25px}.dropdown .divider{border-top:1px solid #808080;border-bottom:1px solid #fff;margin:3px}.shortcut{float:right;margin-left:25px}.tick{position:absolute;left:7px}
+    .toolbar{display:flex;gap:5px;padding:6px;border-top:1px solid #fff;border-bottom:1px solid #808080;align-items:center}.tool{width:26px;height:25px;padding:0;font-size:15px}.sep{height:24px;border-left:1px solid #808080;border-right:1px solid #fff}
+    .content{padding:11px}.intro{display:flex;gap:12px;align-items:center;margin-bottom:10px}.appicon{font-size:34px}.intro h1{font-size:16px;margin:0 0 3px}.intro p{margin:0;color:#333}
+    fieldset{border:2px groove #fff;margin:0 0 10px;padding:10px}legend{padding:0 5px}
+    .formgrid{display:grid;grid-template-columns:180px 1fr;gap:8px 10px;align-items:center}.formgrid label{text-align:right}.formgrid select,.formgrid input[type=text]{width:100%;height:27px;padding:2px 5px;background:#fff;color:#000}
+    .checkrow{grid-column:2;display:flex;gap:18px;flex-wrap:wrap}.checkrow label{text-align:left}.buttons{text-align:right;margin:10px 0}.primary{min-width:145px;font-weight:bold}.danger{color:#900}
+    .result{background:#fff;border:2px inset #fff;padding:10px;min-height:93px}.result .label{color:#555}.filename{font:bold 14px "Courier New",monospace;margin:9px 0;overflow-wrap:anywhere}.meter{height:19px;border:2px inset #fff;background:#fff;position:relative}.meter div{height:100%;width:0;background:repeating-linear-gradient(90deg,#000080 0 10px,transparent 10px 12px);transition:width .35s}.confidence{margin-top:3px;text-align:right}
+    .statusbar{display:grid;grid-template-columns:1fr 160px 120px;gap:3px;padding:3px}.statusbar span{border:2px inset #fff;padding:3px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .bonus{display:none;margin-top:14px}.bonus.open{display:block}.warning{margin-top:8px;padding:7px;background:#ffffe1;border:1px solid #808000}.window.maximized{width:calc(100vw - 8px);margin-top:-24px}.window.minimized .menubar,.window.minimized .toolbar,.window.minimized .content,.window.minimized .statusbar{display:none}.window.minimized{width:min(500px,calc(100vw - 24px))}.fileinput{display:none}
+    .taskbar{position:fixed;left:0;right:0;bottom:0;height:32px;background:var(--face);border-top:2px solid #fff;display:flex;align-items:center;padding:3px;z-index:5}.start{font-weight:bold;padding-left:7px}.taskitem{margin-left:7px;width:min(330px,55vw);text-align:left}.clock{margin-left:auto;border:2px inset #fff;padding:4px 10px}
+    .modalback{display:none;position:fixed;inset:0;background:rgba(0,0,0,.18);z-index:10;align-items:center;justify-content:center}.modalback.show{display:flex}.dialog{width:min(470px,calc(100vw - 30px));background:var(--face);border:2px solid;border-color:#fff #111 #111 #fff;box-shadow:3px 3px #000}.dialogbody{padding:19px;display:flex;gap:14px;align-items:flex-start}.dialogicon{font-size:34px}.dialogtext{line-height:1.6;overflow-wrap:anywhere}.dialogbuttons{text-align:center;padding:0 12px 13px}.dialogbuttons button{min-width:92px;margin:0 3px}
+    @media(max-width:600px){.desktop{padding:8px 4px 42px}.formgrid{grid-template-columns:1fr}.formgrid label{text-align:left}.checkrow{grid-column:1}.statusbar{grid-template-columns:1fr}.menubar,.toolbar{display:none}}
+  </style>
+</head>
+<body>
+<main class="desktop">
+  <section class="window" aria-label="最新版ファイル判定システム">
+    <header class="titlebar"><span class="icon">F</span><span class="caption">最新版ファイル判定システム 2 Professional - [無題]</span><span class="sysbuttons"><button id="minimize" title="最小化">_</button><button id="maximize" title="最大化">□</button><button id="fakeClose" title="閉じる">×</button></span></header>
+    <nav class="menubar">
+      <div class="menu"><button class="menubtn"><u>フ</u>ァイル(F)</button><div class="dropdown"><button data-action="new">新規判定 <span class="shortcut">Ctrl+N</span></button><button data-action="open">候補ファイルを開く... <span class="shortcut">Ctrl+O</span></button><button data-action="save">判定結果を保存 <span class="shortcut">Ctrl+S</span></button><div class="divider"></div><button data-action="close">終了</button></div></div>
+      <div class="menu"><button class="menubtn"><u>編</u>集(E)</button><div class="dropdown"><button data-action="copy">ファイル名をコピー</button><button data-action="shuffle">根拠を入れ替える</button><button data-action="reset">すべて選択解除</button></div></div>
+      <div class="menu"><button class="menubtn"><u>判</u>定(J)</button><div class="dropdown"><button data-action="judge">最新版を判定 <span class="shortcut">F5</span></button><button data-action="rejudge">別の最新版を再判定</button><button data-action="alllatest"><span class="tick">✓</span>すべて最新版として扱う</button></div></div>
+      <div class="menu"><button class="menubtn"><u>責</u>任(R)</button><div class="dropdown"><button data-action="delegate">田中さんへ移譲</button><button data-action="nobody"><span class="tick">✓</span>誰も持たない</button><button data-action="legal">法務に確認したことにする</button></div></div>
+      <div class="menu"><button class="menubtn"><u>ヘ</u>ルプ(H)</button><div class="dropdown"><button data-action="help">使い方</button><button data-action="about">バージョン情報</button><button data-action="why">これは何に使えますか?</button></div></div>
+    </nav>
+    <div class="toolbar"><button class="tool" id="toolNew" title="新規">📄</button><button class="tool" id="toolOpen" title="開く">📂</button><button class="tool" id="toolSave" title="判定結果を保存">💾</button><i class="sep"></i><button class="tool" id="toolbarJudge" title="最新版を判定">✓</button><button class="tool" id="toolDelegate" title="担当者へ転送">👤</button><i class="sep"></i><span>判定エンジン: 勘 v2.0</span><input id="fileInput" class="fileinput" type="file" multiple></div>
+    <div class="content">
+      <div class="intro"><div class="appicon">🗃️</div><div><h1>本当に使うファイル判定ウィザード</h1><p>必要事項をプルダウンから選択してください。実ファイルの内容は確認しません。</p></div></div>
+      <fieldset><legend>判定対象の情報</legend><div class="formgrid">
+        <label for="kind">ファイルの種類(K):</label><select id="kind">
+          <option value="py">Python実行ファイル（最終版）</option><option value="xlsx">Excel台帳（マクロ有効かもしれない）</option><option value="docx">Word正式文書（暫定）</option><option value="pptx">PowerPoint報告資料（報告未実施）</option><option value="json">JSON設定ファイル（手編集済み）</option><option value="csv">CSVデータベース</option><option value="pem">公開用秘密鍵</option><option value="sql">削除予定・現役SQL</option><option value="zip">本番バックアップ最新版</option><option value="md">README（誰も読まない）</option><option value="dll">用途不明DLL（消すと止まる）</option><option value="bat">定時実行バッチ（手動専用）</option><option value="tmp">恒久運用一時ファイル</option><option value="other" disabled>その他（選択不可）</option>
+        </select>
+        <label for="state">現在の状態(S):</label><select id="state"><option>最終</option><option>最新</option><option>確定</option><option>暫定確定</option><option>最終暫定</option><option>レビュー済み（未確認）</option><option>本番反映済み（ローカルのみ）</option><option>誰かが使っている</option><option>分からない</option><option>田中さんに聞く</option></select>
+        <label for="mark">信頼できる目印(M):</label><select id="mark"><option>final</option><option>real</option><option>最新版</option><option>これ</option><option>本当にこれ</option><option>(2)</option><option>_new</option><option>_old</option><option>_bak</option><option>更新日時</option><option>ファイルサイズ</option><option>勘</option></select>
+        <label for="owner">最終更新者(O):</label><select id="owner"><option>自分</option><option>前任者</option><option>退職した田中さん</option><option>協力会社</option><option>Administrator</option><option>不明</option><option>たぶんAI</option></select>
+        <label for="urgency">緊急度(U):</label><select id="urgency"><option>通常</option><option>今日中</option><option>本番障害中</option><option>金曜18時以降</option><option>監査まであと5分</option><option>誰も急いでいないが至急</option></select>
+        <div></div><div class="checkrow"><label><input id="timestamp" type="checkbox" checked> 更新日時を考慮する</label><label><input id="responsibility" type="checkbox"> 判定結果に責任を持つ</label></div>
+      </div></fieldset>
+      <div class="buttons"><button id="reset">入力を初期化</button> <button id="judge" class="primary">最新版を判定(J)</button></div>
+      <fieldset><legend>判定結果</legend><div class="result"><div class="label">採用すべきファイル:</div><div id="filename" class="filename">（まだ判定されていません）</div><div class="meter"><div id="meter"></div></div><div id="confidence" class="confidence">確信度: --.-%</div></div><div id="warning" class="warning">注意: 「更新日時を考慮する」は選択できますが、時刻は信用できないため判定には使用されません。</div></fieldset>
+      <div class="buttons"><button id="bonusBtn">おまけ：リポジトリ名生成機...</button></div>
+      <section id="bonus" class="bonus"><fieldset><legend>リポジトリ名生成機（無償版）</legend><div class="formgrid">
+        <label for="purpose">用途(P):</label><select id="purpose"><option value="document">文書変換</option><option value="invoice">請求書処理</option><option value="auth">認証</option><option value="kanshiki">鑑識</option><option value="batch">夜間バッチ</option><option value="unknown">止めてはいけない何か</option></select>
+        <label for="career">命名者の状態(C):</label><select id="career"><option value="rookie">新人・神話が好き</option><option value="middle">中堅・全部説明したい</option><option value="veteran" selected>叩き上げ・責務直球</option><option value="fire">炎上対応中</option><option value="handover">引き継ぎ資料なし</option></select>
+        <label for="visibility">公開範囲(V):</label><select id="visibility"><option value="internal">社内</option><option value="closed">非公開・絶対出すな</option><option value="public">公開予定（未定）</option><option value="unknown">誰にも分からない</option></select>
+      </div><div class="buttons"><button id="repoGenerate">生成(G)</button> <button id="repoMore">もっと分かりやすく</button></div><div class="result"><div class="label">推奨リポジトリ名:</div><div id="repoName" class="filename">（未生成）</div></div></fieldset></section>
+    </div>
+    <footer class="statusbar"><span id="status">準備完了</span><span>社内標準準拠: たぶん</span><span>CAPS　NUM</span></footer>
+  </section>
+</main>
+<div class="taskbar"><button class="start">🏁 スタート</button><button class="taskitem">🗃️ 最新版ファイル判定...</button><span id="clock" class="clock">00:00</span></div>
+<div id="modal" class="modalback" role="dialog" aria-modal="true"><div class="dialog"><header class="titlebar"><span class="caption">最新版ファイル判定システム</span><span class="sysbuttons"><button id="modalX">×</button></span></header><div class="dialogbody"><div class="dialogicon">⚠️</div><div id="dialogText" class="dialogtext"></div></div><div class="dialogbuttons"><button id="ok">OK</button><button id="cancel">キャンセル</button><button id="deploy" class="danger">すべて本番投入</button></div></div></div>
+<script>
+  const $=id=>document.getElementById(id); const app=document.querySelector('.window');
+  const stems={py:'Finalfinalfainalrealfinalrealfinalfsinal2',xlsx:'見積書_最終_確定_社内確認済み_未確認',docx:'議事録_正式版_暫定_FIX後',pptx:'障害対応手順書_復旧後に作成',json:'本番環境設定_触るな_旧',csv:'顧客マスタ_最新版_重複あり',pem:'秘密鍵_公開用',sql:'削除予定_現役運用中',zip:'release_candidate_FINAL_bak2',md:'README_最新版_読まなくていい',dll:'消さないで_用途不明_2014',bat:'自動実行_手動で起動',tmp:'一時保存_恒久運用_消去禁止'};
+  const stateTokens={'最終':'FINAL','最新':'latest','確定':'確定','暫定確定':'暫定確定','最終暫定':'最終暫定','レビュー済み（未確認）':'reviewed_未確認','本番反映済み（ローカルのみ）':'prod_local_only','誰かが使っている':'in_use_maybe','分からない':'unknown','田中さんに聞く':'ask_tanaka'};
+  const markTokens={final:'final',real:'real','最新版':'最新版','これ':'これ','本当にこれ':'本当にこれ','(2)':'(2)','_new':'new','_old':'old','_bak':'bak','更新日時':'timestamp','ファイルサイズ':'biggest','勘':'probably'};
+  const urgencyTokens={'通常':'','今日中':'_TODAY','本番障害中':'_HOTFIX_NOW','金曜18時以降':'_FRIDAY_DO_NOT_TOUCH','監査まであと5分':'_AUDIT_FINAL','誰も急いでいないが至急':'_ASAP_NOT_URGENT'};
+  let lastFile='', clarity=0;
+  function choose(a){return a[Math.floor(Math.random()*a.length)]}
+  function message(html,buttons=true){$('dialogText').innerHTML=html;$('deploy').style.display=buttons?'inline-block':'none';$('modal').classList.add('show')}
+  function judge(){
+    $('status').textContent='判定中... 実ファイルは読みません'; $('meter').style.width='0';
+    setTimeout(()=>{
+      const ext=$('kind').value, stem=stems[ext], s=stateTokens[$('state').value], m=markTokens[$('mark').value], u=urgencyTokens[$('urgency').value];
+      const suffix=choose(['','_修正版','_FIX','_use_this','_コピー','_'+(Math.floor(Math.random()*7)+2)]);
+      lastFile=`${stem}_${s}_${m}${u}${suffix}.${ext}`;
+      const confidence=(99+Math.random()*.89).toFixed(2);
+      $('filename').textContent=lastFile; $('confidence').textContent=`確信度: ${confidence}%`; $('meter').style.width=confidence+'%'; $('status').textContent='判定完了（根拠なし）';
+      message(`最新版を特定しました。<br><b>${lastFile}</b><br><br>この判定には責任を負いません。`);
+    },420);
+  }
+  $('judge').onclick=judge; $('toolbarJudge').onclick=judge;
+  $('timestamp').onchange=()=>{if($('timestamp').checked)alert('更新日時は変更できるため信用できません。設定だけ保存しました。')};
+  $('responsibility').onchange=()=>{if($('responsibility').checked){alert('この機能は管理者によって無効にされています。');$('responsibility').checked=false}};
+  function resetForm(){document.querySelectorAll('select').forEach(x=>x.selectedIndex=0);$('filename').textContent='（まだ判定されていません）';$('confidence').textContent='確信度: --.-%';$('meter').style.width='0';lastFile='';$('status').textContent='入力だけ初期化しました。ファイルは残っています'} $('reset').onclick=resetForm;
+  $('bonusBtn').onclick=()=>{$('bonus').classList.toggle('open');$('bonusBtn').textContent=$('bonus').classList.contains('open')?'おまけを閉じる':'おまけ：リポジトリ名生成機...'};
+  const repoBase={document:'document-conversion',invoice:'invoice-processing',auth:'user-authentication',kanshiki:'kanshiki',batch:'nightly-batch',unknown:'unknown-service'};
+  function repoName(more=false){
+    const base=repoBase[$('purpose').value], mode=$('career').value, vis=$('visibility').value;
+    const names={rookie:choose(['project-phoenix-'+base,'atlas-'+base,'nova-next-'+base]),middle:'next-generation-'+base+'-platform',veteran:base+(vis==='closed'?'-close-sec':'-service'),fire:'fix-'+base+'-prod-now',handover:'unknown-'+base+'-do-not-stop'};
+    if(more)clarity++; else clarity=0;
+    const append=['','-internal','-prod','-v2','-not-legacy','-final','-use-this'];
+    $('repoName').textContent=names[mode]+append.slice(0,Math.min(clarity+1,append.length)).join('');$('status').textContent='リポジトリ名を生成しました。意味はREADMEを参照';
+  }
+  $('repoGenerate').onclick=()=>repoName(false);$('repoMore').onclick=()=>repoName(true);
+  const closeModal=()=>$('modal').classList.remove('show');$('ok').onclick=closeModal;$('cancel').onclick=()=>{closeModal();$('status').textContent='キャンセルしましたが判定結果は保持されました'};$('modalX').onclick=closeModal;
+  $('deploy').onclick=()=>{$('dialogText').innerHTML=`${lastFile||'選択されたすべてのファイル'} を本番投入しました。<br><br><b>エラー: 投入先が指定されていません。</b>`;$('deploy').style.display='none';$('status').textContent='重大: 正常に失敗しました'};
+  function fakeClose(){message('業務に必要なため終了できません。<br><br>終了するには退職した田中さんの承認が必要です。',false)} $('fakeClose').onclick=fakeClose;
+  $('minimize').onclick=()=>{app.classList.toggle('minimized');$('status').textContent='最小化しました（画面内）'};
+  $('maximize').onclick=()=>{app.classList.remove('minimized');app.classList.toggle('maximized');$('maximize').textContent=app.classList.contains('maximized')?'❐':'□'};
+  function openFiles(){$('fileInput').click()}
+  $('fileInput').onchange=e=>{const n=e.target.files.length;if(!n)return;$('status').textContent=`${n}件を開きました。内容は確認しません`;message(`${n}件の候補ファイルを受け付けました。<br>プライバシー保護のため、ファイル名も内容も読みません。`,false)};
+  function saveResult(){const body=`最新版ファイル判定結果\r\n採用候補: ${lastFile||'未判定'}\r\n確信度: 根拠なく高い\r\n責任者: なし\r\n`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([body],{type:'text/plain'}));a.download='判定結果_最終_確定_暫定.txt';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);$('status').textContent='判定結果を保存しました（これが最新版とは限りません）'}
+  function copyName(){if(!lastFile){message('先に最新版を判定してください。',false);return}navigator.clipboard?.writeText(lastFile).then(()=>$('status').textContent='ファイル名をコピーしました').catch(()=>message('クリップボードも信用できません。',false))}
+  function delegate(){message('担当を「退職した田中さん」へ変更しました。<br>通知には失敗しましたが、責任の移譲には成功しました。',false);$('status').textContent='責任移譲: 完了'}
+  $('toolNew').onclick=resetForm;$('toolOpen').onclick=openFiles;$('toolSave').onclick=saveResult;$('toolDelegate').onclick=delegate;
+  document.querySelectorAll('.menubtn').forEach(btn=>btn.onclick=e=>{e.stopPropagation();const menu=btn.parentElement;document.querySelectorAll('.menu.open').forEach(x=>{if(x!==menu)x.classList.remove('open')});menu.classList.toggle('open');btn.classList.toggle('active',menu.classList.contains('open'))});
+  document.addEventListener('click',()=>document.querySelectorAll('.menu.open').forEach(x=>{x.classList.remove('open');x.querySelector('.menubtn').classList.remove('active')}));
+  const actions={new:resetForm,open:openFiles,save:saveResult,close:fakeClose,copy:copyName,shuffle:()=>{judge();$('status').textContent='根拠を安全に入れ替えました'},reset:resetForm,judge,rejudge:judge,alllatest:()=>message('競合を避けるため、すべてのファイルを最新版に指定しました。',false),delegate,nobody:()=>message('責任者を正常に削除しました。',false),legal:()=>message('法務への確認記録を作成しました。法務には送信していません。',false),help:()=>message('1. プルダウンを選びます。<br>2. 「最新版を判定」を押します。<br>3. 結果を信用しないでください。',false),about:()=>message('<b>最新版ファイル判定システム 2 Professional</b><br>判定エンジン: 勘 v2.0<br>Build: final.final.real.2',false),why:()=>message('<b>現在確認されている用途はありません。</b><br>それでも全機能は正常に動作しています。',false)};
+  document.querySelectorAll('[data-action]').forEach(b=>b.onclick=e=>{e.stopPropagation();document.querySelectorAll('.menu.open').forEach(x=>{x.classList.remove('open');x.querySelector('.menubtn').classList.remove('active')});actions[b.dataset.action]?.()});
+  document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='n'){e.preventDefault();resetForm()}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='o'){e.preventDefault();openFiles()}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();saveResult()}if(e.key==='F5'){e.preventDefault();judge()}if(e.key==='Escape')closeModal()});
+  function clock(){const d=new Date();$('clock').textContent=d.toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})}clock();setInterval(clock,1000);
+</script>
+</body>
+</html>
